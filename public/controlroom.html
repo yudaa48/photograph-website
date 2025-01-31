@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Room</title>
+    <!-- Update CSS path to use your Cloud Storage -->
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="/assets/images/hanaco_tag_black_text.png" alt="Hanaco Logo" class="header-logo">
+        </div>
+        <nav class="nav-center">
+            <a href="/" style="color: red;">Home</a>
+            <a href="/shows">Shows</a>
+            <a href="/gallery">Gallery</a>
+            <a href="/contact">Contact</a>
+        </nav>
+        <div class="user-actions">
+            <a id="account-link" href="#" style="text-decoration: none;">
+                <div class="user-icon" id="user-icon"></div>
+            </a>
+            <span id="auth-action" style="cursor: pointer;"></span>
+            <a href="/cart">
+                <button id="cart-button" class="cart-button">Cart</button>
+            </a>
+        </div>
+    </header>
+
+    <!-- Control Room Section -->
+    <div class="controlroom-container">
+        <!-- Section 1: Packages -->
+        <div class="control-section">
+            <h2>Pages</h2>
+            <div id="pages-list"></div>
+        </div>
+
+        <!-- Section 2: tickets -->
+        <div class="control-section">
+            <h2>Tickets</h2>
+
+        </div>
+
+        <!-- Section 3: Create -->
+        <div class="control-section">
+            <h2>Create</h2>
+            <button id="add-shows-button">Shows</button>
+            <button id="add-week-button">Week</button>
+            <button id="add-day-package-button">Day Package</button>
+            <div id="new-page-name-container" class="new-page-name-container">
+                <input type="text" id="new-page-name" placeholder="Enter new page name">
+                <button id="confirm-create-page">Create Page</button>
+            </div>
+        </div>
+
+        <!-- Section 4: Members -->
+        <div class="control-section">
+            <h2>Members</h2>
+            <ul>
+                <li>hanacophotography@gmail.com</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const addShowsButton = document.getElementById('add-shows-button');
+            const addWeekButton = document.getElementById('add-week-button');
+            const addDayPackageButton = document.getElementById('add-day-package-button');
+            const addSinglePackageButton = document.getElementById('add-single-package-button');
+            const newPageNameContainer = document.getElementById('new-page-name-container');
+            const newPageNameInput = document.getElementById('new-page-name');
+            const confirmCreatePage = document.getElementById('confirm-create-page');
+            const pagesList = document.getElementById('pages-list');
+
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (!loggedInUser || loggedInUser.email !== 'hanacophotography@gmail.com') {
+                document.body.innerHTML = '';
+            }
+
+
+            let selectedSourcePage = '';
+
+            // Shows option
+            addShowsButton.addEventListener('click', () => {
+                selectedSourcePage = 'show24fallclassic'; // Correct source page for duplication
+                newPageNameContainer.style.display = 'block'; // Show input field for new page name
+            });
+
+            // Fetch the list of pages from the server
+            fetch('https://elasticbeanstalk-us-east-2-717279704117.s3.us-east-2.amazonaws.com/get-pages')
+                .then((response) => response.json())
+                .then((data) => {
+                    const { allPages } = data;
+                    allPages.forEach((page) => {
+                        const pageLink = document.createElement('a');
+                        pageLink.href = page;
+                        pageLink.target = '_blank';
+                        pageLink.textContent = page;
+                        pageLink.style.display = 'block'; // Ensure each page appears on a new line
+                        pagesList.appendChild(pageLink);
+                    });
+                })
+                .catch((error) => console.error('Error fetching pages:', error));
+
+
+            // Week option
+            addWeekButton.addEventListener('click', () => {
+                selectedSourcePage = 'week24fallclassic1';
+                newPageNameContainer.style.display = 'block';
+            });
+
+            // Day Package option
+            addDayPackageButton.addEventListener('click', () => {
+                selectedSourcePage = 'p24fallclassic1wed';
+                newPageNameContainer.style.display = 'block';
+            });
+
+            // Confirm page creation
+            confirmCreatePage.addEventListener('click', () => {
+                const newPageName = newPageNameInput.value.trim();
+
+                if (!newPageName) {
+                    alert('Please enter a new page name.');
+                    return;
+                }
+
+                fetch('https://elasticbeanstalk-us-east-2-717279704117.s3.us-east-2.amazonaws.com/duplicate-page', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sourcePage: selectedSourcePage,
+                        newPageName,
+                    }),
+                })
+                    .then((response) => {
+                        if (response.ok) {
+                            alert('Page created successfully!');
+                            newPageNameContainer.style.display = 'none';
+                        } else {
+                            alert('Failed to create page.');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        alert('An error occurred while creating the page.');
+                    });
+            });
+
+
+        });
+    </script>
+</body>
+</html>

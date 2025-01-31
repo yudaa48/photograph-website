@@ -1,0 +1,428 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Page</title>
+    <!-- Update CSS path to use your Cloud Storage -->
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="/assets/images/hanaco_tag_black_text.png" alt="Hanaco Logo" class="header-logo">
+        </div>
+        <nav class="nav-center">
+            <a href="/" style="color: red;">Home</a>
+            <a href="/shows">Shows</a>
+            <a href="/gallery">Gallery</a>
+            <a href="/contact">Contact</a>
+        </nav>
+        <div class="user-actions">
+            <a id="account-link" href="#" style="text-decoration: none;">
+                <div class="user-icon" id="user-icon"></div>
+            </a>
+            <span id="auth-action" style="cursor: pointer;"></span>
+            <a href="/cart">
+                <button id="cart-button" class="cart-button">Cart</button>
+            </a>
+        </div>
+    </header>
+
+    <!-- Account Page Content -->
+    <div class="account-container">
+
+        <!-- My Rides Section -->
+        <div class="account-section">
+            <h2>My Rides</h2>
+            <p>Quickly find your ride.</p>
+            <button class="action-button" id="add-ride-number">Add Number</button>
+            <div id="rides-search-container" style="display: none; margin-top: 10px;">
+                <input type="text" id="ride-number-input" placeholder="Enter a number" style="padding: 5px; width: 200px;">
+                <button id="search-ride-number" class="action-button" style="padding: 5px;">Search</button>
+            </div>
+            <ul id="rides-list" style="list-style: none; padding: 0; margin-top: 15px;"></ul>
+        </div>
+
+        <div class="vertical-line"></div>
+
+        <!-- Favorites Section -->
+        <div class="account-section">
+            <h2>Favorites</h2>
+            <div id="favorites-section" class="account-section-fav">
+                <div id="favorites-list"></div>
+            </div>
+        </div>
+
+
+        <div class="vertical-line"></div>
+
+        <!-- Private Gallery -->
+        <div class="account-section">
+            <h2>Private Galleries</h2>
+            <p>See your private galleries.</p>
+            <ul id="order-history" style="list-style: none; padding: 0;">
+            </ul>
+        </div>
+
+        <div class="vertical-line"></div>
+
+
+        <!-- Order History Section -->
+        <div class="account-section">
+            <h2>Order History</h2>
+            <p>View your past orders below.</p>
+            <ul id="order-history" style="list-style: none; padding: 0;">
+                <li>No orders yet.</li>
+            </ul>
+        </div>
+
+        <div class="vertical-line"></div>
+
+
+        <!-- Account Info Section -->
+        <div class="account-section">
+            <h2>Account Info</h2>
+            <p style="margin-bottom: 10px;">Logged in as <span id="user-email"></span></p>
+            <button class="action-button" id="change-password">Change Password</button>
+            <button class="action-button" id="contact-info">Contact Information</button>
+            <button class="action-button" id="payment-options">Payment Options</button>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Utility function for creating and styling error messages
+            function displayErrorMessage(container, message) {
+                // Clear previous content
+                container.innerHTML = '';
+
+                // Create error message element
+                const errorElement = document.createElement('div');
+                errorElement.style.color = '#d9534f';  // Bootstrap-like error color
+                errorElement.style.backgroundColor = '#f2dede';  // Light error background
+                errorElement.style.border = '1px solid #ebccd1';
+                errorElement.style.padding = '10px';
+                errorElement.style.borderRadius = '4px';
+                errorElement.style.margin = '10px 0';
+                errorElement.textContent = message;
+
+                // Add error message to container
+                container.appendChild(errorElement);
+            }
+
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            const authAction = document.getElementById('auth-action');
+            const userIcon = document.getElementById('user-icon');
+            const accountLink = document.getElementById('account-link');
+
+            const addRideButton = document.getElementById('add-ride-number');
+            const searchContainer = document.getElementById('rides-search-container');
+            const searchButton = document.getElementById('search-ride-number');
+            const inputField = document.getElementById('ride-number-input');
+            const ridesList = document.getElementById('rides-list');
+            const favoritesContainer = document.getElementById('favorites-section');
+
+            // Authentication check
+            if (!loggedInUser) {
+                alert('You need to be logged in to access your account.');
+                window.location.href = 'login';
+                return;
+            }
+
+            // User Interface Setup
+            function setupUserInterface() {
+                authAction.textContent = 'Log Out';
+                userIcon.textContent = loggedInUser.email.charAt(0).toUpperCase();
+                userIcon.style.display = 'flex';
+                userIcon.style.alignItems = 'center';
+                userIcon.style.justifyContent = 'center';
+                userIcon.style.width = '25px';
+                userIcon.style.height = '25px';
+                userIcon.style.borderRadius = '50%';
+                userIcon.style.backgroundColor = '#ccc';
+                userIcon.style.marginLeft = '10px';
+                userIcon.style.color = '#000';
+                userIcon.style.fontSize = '16px';
+
+                accountLink.href = `account?email=${encodeURIComponent(loggedInUser.email)}`;
+                document.getElementById('user-email').textContent = loggedInUser.email;
+            }
+
+            // Fetch Favorites with Enhanced Error Handling
+            function fetchFavorites() {
+                // Clear previous content
+                favoritesContainer.innerHTML = '';
+
+                // Show loading indicator
+                const loadingIndicator = document.createElement('p');
+                loadingIndicator.textContent = 'Loading favorites...';
+                loadingIndicator.style.color = '#666';
+                favoritesContainer.appendChild(loadingIndicator);
+
+                // Fetch favorites
+                fetch(`/api/favorites?email=${encodeURIComponent(loggedInUser.email)}`)
+                    .then((response) => {
+                        // Remove loading indicator
+                        loadingIndicator.remove();
+
+                        // Log response details for debugging
+                        console.log('Favorites Fetch Response:', {
+                            status: response.status,
+                            headers: Object.fromEntries(response.headers.entries())
+                        });
+
+                        // Handle different response scenarios
+                        if (response.status === 404) {
+                            throw new Error('User not found. Please log in again.');
+                        }
+
+                        if (!response.ok) {
+                            // Try to parse error response
+                            return response.json().then(errorBody => {
+                                console.error('Detailed Error Body:', errorBody);
+                                throw new Error(errorBody.message || 'Failed to fetch favorites');
+                            }).catch(() => {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            });
+                        }
+
+                        return response.json();
+                    })
+                    .then((data) => {
+                        // Ensure favorites is an array
+                        const favorites = Array.isArray(data.favorites) ? data.favorites : [];
+
+                        // Clear container
+                        favoritesContainer.innerHTML = '';
+
+                        // Handle no favorites
+                        if (favorites.length === 0) {
+                            const noFavoritesMessage = document.createElement('p');
+                            noFavoritesMessage.textContent = 'No favorites yet.';
+                            noFavoritesMessage.style.color = '#666';
+                            favoritesContainer.appendChild(noFavoritesMessage);
+                            return;
+                        }
+
+                        // Render favorites
+                        favorites.forEach((folderName) => {
+                            const favoriteItem = createFavoriteItem(folderName);
+                            favoritesContainer.appendChild(favoriteItem);
+                        });
+                    })
+                    .catch((error) => {
+                        // Log full error details
+                        console.error('Favorites Fetch Error:', {
+                            message: error.message,
+                            name: error.name,
+                            stack: error.stack
+                        });
+
+                        // Display user-friendly error message
+                        displayErrorMessage(
+                            favoritesContainer, 
+                            `Unable to load favorites: ${error.message}. Please try again later.`
+                        );
+                    });
+            }
+
+            // Create Favorite Item with Remove Functionality
+            function createFavoriteItem(folderName) {
+                const favoriteItem = document.createElement('div');
+                favoriteItem.style.display = 'flex';
+                favoriteItem.style.justifyContent = 'space-between';
+                favoriteItem.style.alignItems = 'center';
+                favoriteItem.style.margin = '5px 0';
+                favoriteItem.style.padding = '10px';
+                favoriteItem.style.border = '1px solid #ddd';
+                favoriteItem.style.borderRadius = '5px';
+
+                // Favorite Link
+                const favoriteLink = document.createElement('a');
+                favoriteLink.textContent = folderName;
+                favoriteLink.href = `p24fallclassic1wed?folder=${encodeURIComponent(folderName)}`;
+                favoriteLink.target = '_blank';
+                favoriteLink.style.flexGrow = '1';
+                favoriteLink.style.textDecoration = 'none';
+                favoriteLink.style.color = '#000';
+                favoriteLink.style.marginRight = '10px';
+
+                // Remove Button
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.style.backgroundColor = '#ff4d4d';
+                removeButton.style.color = 'white';
+                removeButton.style.border = 'none';
+                removeButton.style.padding = '5px 10px';
+                removeButton.style.borderRadius = '3px';
+                removeButton.style.cursor = 'pointer';
+
+                // Remove Favorite Handler
+                removeButton.addEventListener('click', () => {
+                    // Disable button during request
+                    removeButton.disabled = true;
+                    removeButton.textContent = 'Removing...';
+
+                    fetch('/api/favorites/remove', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            email: loggedInUser.email, 
+                            folderName 
+                        }),
+                    })
+                    .then((response) => {
+                        if (!response.ok) {
+                            return response.json().then(errorBody => {
+                                throw new Error(errorBody.message || 'Failed to remove favorite');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(() => {
+                        // Remove the item from the UI
+                        favoriteItem.remove();
+                        
+                        // Check if no favorites remain
+                        if (favoritesContainer.children.length === 0) {
+                            const noFavoritesMessage = document.createElement('p');
+                            noFavoritesMessage.textContent = 'No favorites yet.';
+                            noFavoritesMessage.style.color = '#666';
+                            favoritesContainer.appendChild(noFavoritesMessage);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error removing favorite:', error);
+                        
+                        // Re-enable button and show error
+                        removeButton.disabled = false;
+                        removeButton.textContent = 'Remove';
+                        
+                        // Show error message
+                        displayErrorMessage(
+                            favoritesContainer, 
+                            `Failed to remove favorite: ${error.message}`
+                        );
+                    });
+                });
+
+                // Assemble favorite item
+                favoriteItem.appendChild(favoriteLink);
+                favoriteItem.appendChild(removeButton);
+
+                return favoriteItem;
+            }
+
+            // Ride Search Functionality
+            function setupRideSearch() {
+                addRideButton.addEventListener('click', () => {
+                    searchContainer.style.display = searchContainer.style.display === 'none' ? 'block' : 'none';
+                });
+
+                searchButton.addEventListener('click', () => {
+                    const rideNumber = inputField.value.trim();
+
+                    if (!rideNumber) {
+                        alert('Please enter a number to search.');
+                        return;
+                    }
+
+                    // Clear previous results
+                    ridesList.innerHTML = '';
+
+                    // Show loading indicator
+                    const loadingIndicator = document.createElement('li');
+                    loadingIndicator.textContent = 'Searching...';
+                    ridesList.appendChild(loadingIndicator);
+
+                    fetch(`/search-rides?number=${encodeURIComponent(rideNumber)}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Failed to search rides.');
+                            }
+                            return response.json();
+                        })
+                        .then(folders => {
+                            // Clear loading indicator
+                            ridesList.innerHTML = '';
+
+                            if (folders.length === 0) {
+                                const noResultsItem = document.createElement('li');
+                                noResultsItem.textContent = 'No rides found.';
+                                noResultsItem.style.color = '#666';
+                                ridesList.appendChild(noResultsItem);
+                                return;
+                            }
+
+                            // Add matching folders as clickable links
+                            folders.forEach(({ folderName, page }) => {
+                                const listItem = document.createElement('li');
+                                const folderLink = document.createElement('a');
+
+                                folderLink.textContent = folderName;
+                                folderLink.href = `${page}?folder=${encodeURIComponent(folderName)}`;
+                                folderLink.target = '_blank';
+                                folderLink.style.textDecoration = 'none';
+                                folderLink.style.color = '#000';
+
+                                listItem.appendChild(folderLink);
+                                ridesList.appendChild(listItem);
+                            });
+                        })
+                        .catch(error => {
+                            // Clear loading indicator
+                            ridesList.innerHTML = '';
+
+                            console.error('Error searching rides:', error);
+                            
+                            // Display error message
+                            const errorItem = document.createElement('li');
+                            errorItem.textContent = `Search failed: ${error.message}`;
+                            errorItem.style.color = '#d9534f';
+                            ridesList.appendChild(errorItem);
+                        });
+                });
+            }
+
+            // Logout Handler
+            function setupLogoutHandler() {
+                authAction.addEventListener('click', () => {
+                    localStorage.removeItem('loggedInUser');
+                    window.location.reload();
+                });
+            }
+
+            // Initialize Page
+            function initPage() {
+                setupUserInterface();
+                fetchFavorites();
+                setupRideSearch();
+                setupLogoutHandler();
+            }
+
+            // Execute initialization
+            initPage();
+        });
+    </script>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <h1>Hanaco</h1>
+            <p>Know Where I'm Going to Be Shooting Next!</p>
+            <form id="subscribe-form" action="/subscribe" method="POST">
+                <div class="footer-content input[type=" text"]">
+                    <input type="email" name="email" placeholder="Enter your email here *" required>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="footer-icon">
+                <p>2024 Hanaco Photo LLC</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

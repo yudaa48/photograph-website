@@ -1,0 +1,531 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Page</title>
+    <!-- Update CSS path to use your Cloud Storage -->
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="/assets/images/hanaco_tag_black_text.png" alt="Hanaco Logo" class="header-logo">
+        </div>
+        <nav class="nav-center">
+            <a href="/" style="color: red;">Home</a>
+            <a href="/shows">Shows</a>
+            <a href="/gallery">Gallery</a>
+            <a href="/contact">Contact</a>
+        </nav>
+        <div class="user-actions">
+            <a id="account-link" href="#" style="text-decoration: none;">
+                <div class="user-icon" id="user-icon"></div>
+            </a>
+            <span id="auth-action" style="cursor: pointer;"></span>
+            <a href="/cart">
+                <button id="cart-button" class="cart-button">Cart</button>
+            </a>
+        </div>
+    </header>
+
+    <!-- Connect Page Button -->
+    <div id="connect-page-container" class="connect-page-container" style="display: none;">
+        <button id="connect-page-button">Connect Page</button>
+    </div>
+
+    <div id="admin-tools-container" class="admin-tools-container" style="display: none;">
+        <button id="admin-tools-button">Edit Titles</button>
+        <div id="admin-tools-form" class="admin-tools-form" style="display: none;">
+            <input type="text" id="top-title-input" placeholder="Enter top title">
+            <input type="text" id="bottom-title-input" placeholder="Enter bottom title">
+            <button id="submit-titles-button">Okay</button>
+        </div>
+    </div>
+
+
+    <!-- Connect Page Form -->
+    <div id="connect-page-form" class="connect-page-form">
+        <h3>Connect Images to the Grid</h3>
+        <form id="image-form">
+            <!-- Form Groups -->
+            <div class="form-group">
+                <input type="text" id="textbox-0" placeholder="Enter text for Image 1">
+                <select id="page-selector-0">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-1" placeholder="Enter text for Image 2">
+                <select id="page-selector-1">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-2" placeholder="Enter text for Image 3">
+                <select id="page-selector-2">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-3" placeholder="Enter text for Image 4">
+                <select id="page-selector-3">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-4" placeholder="Enter text for Image 5">
+                <select id="page-selector-4">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-5" placeholder="Enter text for Image 6">
+                <select id="page-selector-5">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-6" placeholder="Enter text for Image 7">
+                <select id="page-selector-6">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-7" placeholder="Enter text for Image 8">
+                <select id="page-selector-7">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-8" placeholder="Enter text for Image 9">
+                <select id="page-selector-8">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-9" placeholder="Enter text for Image 10">
+                <select id="page-selector-9">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-10" placeholder="Enter text for Image 11">
+                <select id="page-selector-10">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-11" placeholder="Enter text for Image 12">
+                <select id="page-selector-11">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-12" placeholder="Enter text for Image 13">
+                <select id="page-selector-12">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-13" placeholder="Enter text for Image 14">
+                <select id="page-selector-13">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-14" placeholder="Enter text for Image 15">
+                <select id="page-selector-14">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-15" placeholder="Enter text for Image 16">
+                <select id="page-selector-15">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-16" placeholder="Enter text for Image 17">
+                <select id="page-selector-16">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-17" placeholder="Enter text for Image 18">
+                <select id="page-selector-17">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-18" placeholder="Enter text for Image 19">
+                <select id="page-selector-18">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-19" placeholder="Enter text for Image 20">
+                <select id="page-selector-19">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-20" placeholder="Enter text for Image 21">
+                <select id="page-selector-20">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-21" placeholder="Enter text for Image 22">
+                <select id="page-selector-21">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-22" placeholder="Enter text for Image 23">
+                <select id="page-selector-22">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="textbox-23" placeholder="Enter text for Image 24">
+                <select id="page-selector-23">
+                    <option value="">Select a page</option>
+                </select>
+            </div>
+            <button type="submit" style="padding: 10px 20px;">Update Grid</button>
+        </form>
+    </div>
+
+    <!-- Main Content -->
+    <div class="week-container">
+        <button id="back-button" style="background: none; border: none; font-size: 24px; cursor: pointer; position: absolute; left: 600px;">
+            ✖
+        </button>
+        <h3 class="pre-title">HITS 2024</h3>
+        <h1 class="main-title">Fall Classic</h1>
+
+        <div id="week-grid" class="week-grid">
+            <!-- Grid Items -->
+            <div id="grid-item-0" class="grid-item" style="display: none;">
+                <a id="grid-link-0" href="#">
+                    <p id="grid-text-0"></p>
+                </a>
+            </div>
+            <div id="grid-item-1" class="grid-item" style="display: none;">
+                <a id="grid-link-1" href="#">
+                    <p id="grid-text-1"></p>
+                </a>
+            </div>
+            <div id="grid-item-2" class="grid-item" style="display: none;">
+                <a id="grid-link-2" href="#">
+                    <p id="grid-text-2"></p>
+                </a>
+            </div>
+            <div id="grid-item-3" class="grid-item" style="display: none;">
+                <a id="grid-link-3" href="#">
+                    <p id="grid-text-3"></p>
+                </a>
+            </div>
+            <div id="grid-item-4" class="grid-item" style="display: none;">
+                <a id="grid-link-4" href="#">
+                    <p id="grid-text-4"></p>
+                </a>
+            </div>
+            <div id="grid-item-5" class="grid-item" style="display: none;">
+                <a id="grid-link-5" href="#">
+                    <p id="grid-text-5"></p>
+                </a>
+            </div>
+            <div id="grid-item-6" class="grid-item" style="display: none;">
+                <a id="grid-link-6" href="#">
+                    <p id="grid-text-6"></p>
+                </a>
+            </div>
+            <div id="grid-item-7" class="grid-item" style="display: none;">
+                <a id="grid-link-7" href="#">
+                    <p id="grid-text-7"></p>
+                </a>
+            </div>
+            <div id="grid-item-8" class="grid-item" style="display: none;">
+                <a id="grid-link-8" href="#">
+                    <p id="grid-text-8"></p>
+                </a>
+            </div>
+            <div id="grid-item-9" class="grid-item" style="display: none;">
+                <a id="grid-link-9" href="#">
+                    <p id="grid-text-9"></p>
+                </a>
+            </div>
+            <div id="grid-item-10" class="grid-item" style="display: none;">
+                <a id="grid-link-10" href="#">
+                    <p id="grid-text-10"></p>
+                </a>
+            </div>
+            <div id="grid-item-11" class="grid-item" style="display: none;">
+                <a id="grid-link-11" href="#">
+                    <p id="grid-text-11"></p>
+                </a>
+            </div>
+            <div id="grid-item-12" class="grid-item" style="display: none;">
+                <a id="grid-link-12" href="#">
+                    <p id="grid-text-12"></p>
+                </a>
+            </div>
+            <div id="grid-item-13" class="grid-item" style="display: none;">
+                <a id="grid-link-13" href="#">
+                    <p id="grid-text-13"></p>
+                </a>
+            </div>
+            <div id="grid-item-14" class="grid-item" style="display: none;">
+                <a id="grid-link-14" href="#">
+                    <p id="grid-text-14"></p>
+                </a>
+            </div>
+            <div id="grid-item-15" class="grid-item" style="display: none;">
+                <a id="grid-link-15" href="#">
+                    <p id="grid-text-15"></p>
+                </a>
+            </div>
+            <div id="grid-item-16" class="grid-item" style="display: none;">
+                <a id="grid-link-16" href="#">
+                    <p id="grid-text-16"></p>
+                </a>
+            </div>
+            <div id="grid-item-17" class="grid-item" style="display: none;">
+                <a id="grid-link-17" href="#">
+                    <p id="grid-text-17"></p>
+                </a>
+            </div>
+            <div id="grid-item-18" class="grid-item" style="display: none;">
+                <a id="grid-link-18" href="#">
+                    <p id="grid-text-18"></p>
+                </a>
+            </div>
+            <div id="grid-item-19" class="grid-item" style="display: none;">
+                <a id="grid-link-19" href="#">
+                    <p id="grid-text-19"></p>
+                </a>
+            </div>
+            <div id="grid-item-20" class="grid-item" style="display: none;">
+                <a id="grid-link-20" href="#">
+                    <p id="grid-text-20"></p>
+                </a>
+            </div>
+            <div id="grid-item-21" class="grid-item" style="display: none;">
+                <a id="grid-link-21" href="#">
+                    <p id="grid-text-21"></p>
+                </a>
+            </div>
+            <div id="grid-item-22" class="grid-item" style="display: none;">
+                <a id="grid-link-22" href="#">
+                    <p id="grid-text-22"></p>
+                </a>
+            </div>
+            <div id="grid-item-23" class="grid-item" style="display: none;">
+                <a id="grid-link-23" href="#">
+                    <p id="grid-text-23"></p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const connectPageContainer = document.getElementById('connect-page-container');
+            const connectPageButton = document.getElementById('connect-page-button');
+            const imageForm = document.getElementById('image-form');
+            const backButton = document.getElementById('back-button');
+
+            const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            const authAction = document.getElementById('auth-action');
+            const userIcon = document.getElementById('user-icon');
+            const accountLink = document.getElementById('account-link');
+
+            const adminToolsContainer = document.getElementById('admin-tools-container');
+            const adminToolsButton = document.getElementById('admin-tools-button');
+            const adminToolsForm = document.getElementById('admin-tools-form');
+            const topTitleInput = document.getElementById('top-title-input');
+            const bottomTitleInput = document.getElementById('bottom-title-input');
+            const submitTitlesButton = document.getElementById('submit-titles-button');
+            const preTitle = document.querySelector('.pre-title');
+            const mainTitle = document.querySelector('.main-title');
+
+
+            // Load saved titles from localStorage
+            const loadTitles = () => {
+                const pageKey = document.title; // Use the <title> tag as the key
+                const savedTitles = JSON.parse(localStorage.getItem(`${pageKey}-titles`)) || {};
+                if (savedTitles.topTitle) preTitle.textContent = savedTitles.topTitle;
+                if (savedTitles.bottomTitle) mainTitle.textContent = savedTitles.bottomTitle;
+            };
+
+            // Save titles to localStorage
+            const saveTitles = (topTitle, bottomTitle) => {
+                const pageKey = document.title; // Use the <title> tag as the key
+                const titles = {
+                    topTitle: topTitle || preTitle.textContent,
+                    bottomTitle: bottomTitle || mainTitle.textContent,
+                };
+                localStorage.setItem(`${pageKey}-titles`, JSON.stringify(titles));
+            };
+
+            // Show the form on button click
+            adminToolsButton.addEventListener('click', () => {
+                adminToolsForm.style.display = adminToolsForm.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // Update titles on "Okay" button click
+            submitTitlesButton.addEventListener('click', () => {
+                const topTitle = topTitleInput.value.trim();
+                const bottomTitle = bottomTitleInput.value.trim();
+
+                if (topTitle) preTitle.textContent = topTitle;
+                if (bottomTitle) mainTitle.textContent = bottomTitle;
+
+                saveTitles(topTitle, bottomTitle);
+                adminToolsForm.style.display = 'none';
+                alert('Titles updated successfully!');
+            });
+
+            if (loggedInUser) {
+                // Show "Log Out" and user initial
+                authAction.textContent = 'Log Out';
+                userIcon.textContent = loggedInUser.email.charAt(0).toUpperCase();
+                userIcon.style.display = 'flex';
+                userIcon.style.alignItems = 'center';
+                userIcon.style.justifyContent = 'center';
+                userIcon.style.width = '25px';
+                userIcon.style.height = '25px';
+                userIcon.style.borderRadius = '50%';
+                userIcon.style.backgroundColor = '#ccc';
+                userIcon.style.marginLeft = '10px';
+                userIcon.style.color = '#000';
+                userIcon.style.fontSize = '16px';
+
+                // Make the icon clickable and link to the specific account page
+                accountLink.href = `account?email=${encodeURIComponent(loggedInUser.email)}`;
+            } else {
+                // Show "Log In"
+                authAction.textContent = 'Log In';
+                userIcon.style.display = 'none';
+                accountLink.style.display = 'none';
+            }
+
+            authAction.addEventListener('click', () => {
+                if (loggedInUser) {
+                    localStorage.removeItem('loggedInUser');
+                    window.location.reload();
+                } else {
+                    window.location.href = 'login';
+                }
+            });
+
+            // Show Connect Pages button for authorized user
+            if (loggedInUser && loggedInUser.email === 'hanacophotography@gmail.com') {
+                adminToolsContainer.style.display = 'block';
+                connectPageContainer.style.display = 'block';
+                connectPageButton.addEventListener('click', () => {
+                    document.getElementById('connect-page-form').style.display = 'block';
+                });
+            }
+
+            // Back button functionality
+            backButton.addEventListener('click', () => {
+                window.history.back();
+            });
+
+            // Populate dropdown options dynamically
+            const populateDropdowns = async () => {
+                try {
+                    const response = await fetch('https://elasticbeanstalk-us-east-2-717279704117.s3.us-east-2.amazonaws.com/get-pages'); // Update endpoint as needed
+                    const { allPages } = await response.json();
+                    for (let i = 0; i < 24; i++) {
+                        const dropdown = document.getElementById(`page-selector-${i}`);
+                        if (dropdown) {
+                            dropdown.innerHTML = '<option value="">Select a page</option>';
+                            allPages.forEach((page) => {
+                                const option = document.createElement('option');
+                                option.value = page;
+                                option.textContent = page;
+                                dropdown.appendChild(option);
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching dropdown options:', error);
+                }
+            };
+
+            // Load grid data and update the UI
+            const loadGridData = () => {
+                const gridData = JSON.parse(localStorage.getItem('week-grid-data')) || [];
+                gridData.forEach((item, i) => {
+                    const gridItem = document.getElementById(`grid-item-${i}`);
+                    const gridText = document.getElementById(`grid-text-${i}`);
+                    const gridLink = document.getElementById(`grid-link-${i}`);
+
+                    if (item) {
+                        gridItem.style.display = 'block';
+                        gridText.textContent = item.text || '';
+                        gridLink.href = item.link || '#';
+                    } else {
+                        gridItem.style.display = 'none';
+                    }
+                });
+            };
+
+            // Save grid data to local storage
+            const saveGridData = (gridData) => {
+                localStorage.setItem('week-grid-data', JSON.stringify(gridData));
+            };
+
+            // Handle form submission
+            imageForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const gridData = [];
+                for (let i = 0; i < 24; i++) {
+                    const textBox = document.getElementById(`textbox-${i}`);
+                    const pageSelector = document.getElementById(`page-selector-${i}`);
+
+                    if (textBox && pageSelector) {
+                        const text = textBox.value.trim();
+                        const link = pageSelector.value.trim();
+
+                        // Only save data for fields that are not empty
+                        if (text || link) {
+                            gridData.push({ text, link });
+                        }
+                    }
+                }
+
+                saveGridData(gridData);
+                loadGridData();
+                alert('Grid updated successfully!');
+            });
+
+            // Show Connect Pages button for authorized user
+            if (loggedInUser && loggedInUser.email === 'hanacophotography@gmail.com') {
+                connectPageContainer.style.display = 'block';
+                connectPageButton.addEventListener('click', () => {
+                    document.getElementById('connect-page-form').style.display = 'block';
+                });
+            }
+
+            await populateDropdowns();
+            loadGridData();
+            loadTitles();
+        });
+    </script>
+    <footer>
+        <div class="footer-content">
+
+            <div class="footer-icon">
+                <p>2024 Hanaco Photo LLC</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

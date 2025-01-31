@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe Test</title>
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            margin: 10px 0;
+            padding: 8px 16px;
+        }
+        input {
+            padding: 8px;
+            width: 200px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Subscribe Test Page</h2>
+        
+        <!-- Test Connection -->
+        <div>
+            <h3>1. Test Datastore Connection</h3>
+            <button onclick="testConnection()">Test Connection</button>
+            <div id="testResult" class="result"></div>
+        </div>
+
+        <!-- Subscribe Form -->
+        <div>
+            <h3>2. Test Subscribe</h3>
+            <input type="email" id="emailInput" placeholder="Enter email">
+            <button onclick="testSubscribe()">Subscribe</button>
+            <div id="subscribeResult" class="result"></div>
+        </div>
+
+        <div>
+            <h3>0. Initialize Collection</h3>
+            <button onclick="initializeCollection()">Initialize Collection</button>
+            <div id="initResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Test Datastore connection
+        async function testConnection() {
+            const resultDiv = document.getElementById('testResult');
+            try {
+                const response = await fetch('/api/subscribe/test');
+                const data = await response.json();
+                resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        // Test subscribe
+        async function testSubscribe() {
+            const email = document.getElementById('emailInput').value;
+            const resultDiv = document.getElementById('subscribeResult');
+            
+            try {
+                const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        // Add this function to your existing script
+        async function initializeCollection() {
+            const resultDiv = document.getElementById('initResult');
+            try {
+                const response = await fetch('/api/subscribe/init', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,758 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Page</title>
+    <!-- Update CSS path to use your Cloud Storage -->
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="/assets/images/hanaco_tag_black_text.png" alt="Hanaco Logo" class="header-logo">
+        </div>
+        <nav class="nav-center">
+            <a href="/" style="color: red;">Home</a>
+            <a href="/shows">Shows</a>
+            <a href="/gallery">Gallery</a>
+            <a href="/contact">Contact</a>
+        </nav>
+        <div class="user-actions">
+            <a id="account-link" href="#" style="text-decoration: none;">
+                <div class="user-icon" id="user-icon"></div>
+            </a>
+            <span id="auth-action" style="cursor: pointer;"></span>
+            <a href="/cart">
+                <button id="cart-button" class="cart-button">Cart</button>
+            </a>
+        </div>
+    </header>
+
+
+    <!-- Connect Pages Button -->
+    <div id="connect-page-container" class="connect-page-container">
+        <button id="connect-pages-button">Connect Page</button>
+    </div>
+
+    <div id="admin-tools-container" class="admin-tools-container" style="display: none;">
+        <button id="admin-tools-button">Edit Titles</button>
+        <div id="admin-tools-form" class="admin-tools-form" style="display: none;">
+            <input type="text" id="top-title-input" placeholder="Enter top title">
+            <input type="text" id="main-title-input" placeholder="Enter main title">
+            <input type="text" id="sub-title-input" placeholder="Enter sub title">
+            <button id="submit-titles-button">Okay</button>
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="week-container">
+        <button id="back-button" style="background: none; border: none; font-size: 24px; cursor: pointer; position: absolute; left: 600px;">
+            ✖
+        </button>
+        <h3 class="pre-title">HITS 2024</h3>
+        <h1 class="main-title">Fall Classic</h1>
+        <h3 class="sub-title2">WEDNESDAY</h3>
+
+
+
+        <!-- Connect Options -->
+        <div id="connect-options" style="display: none;">
+            <button id="create-folder-button">Create Folder</button>
+            <button id="upload-files-button">Upload Files</button>
+            <button id="delete-folder-button">Delete Folder</button>
+        </div>
+
+        <!-- Delete Folder Section -->
+        <div id="delete-folder-section" style="display: none;">
+            <select id="delete-folder-dropdown">
+                <option value="">Select a folder to delete</option>
+            </select>
+            <button id="confirm-delete-folder">Delete Folder</button>
+        </div>
+
+
+
+        <!-- Create Folder Section -->
+        <div id="create-folder-section" style="display: none;">
+            <input type="text" id="folder-name-input" placeholder="Folder Name">
+            <input type="number" id="folder-price-input" placeholder="Price">
+            <button id="add-folder-input">Add Another Folder</button>
+            <button id="create-folder-confirm">Create</button>
+            <div id="folder-inputs"></div>
+        </div>
+
+
+        <!-- Folder Buttons -->
+        <div class="gallery-container" id="folder-gallery"></div>
+
+
+        <!-- Upload Files Section -->
+        <div id="upload-files-section" style="display: none;">
+            <select id="folder-dropdown"></select>
+            <input type="file" id="file-uploader" multiple>
+            <input type="number" id="file-price-input" placeholder="Add Price ($)" step="0.01" min="0">
+            <button id="upload-files-confirm">Upload</button>
+        </div>
+
+
+        <!-- Photo Display Overlay -->
+        <div id="photo-display" class="overlay">
+            <button class="close-btn" id="close-photo-display">X</button>
+            <div class="content" id="photo-display-content"></div>
+        </div>
+
+    </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+                const authAction = document.getElementById('auth-action');
+                const userIcon = document.getElementById('user-icon');
+                const accountLink = document.getElementById('account-link');
+                const backButton = document.getElementById('back-button');
+
+                const adminToolsContainer = document.getElementById('admin-tools-container');
+                const adminToolsButton = document.getElementById('admin-tools-button');
+                const adminToolsForm = document.getElementById('admin-tools-form');
+                const topTitleInput = document.getElementById('top-title-input');
+                const mainTitleInput = document.getElementById('main-title-input');
+                const subTitleInput = document.getElementById('sub-title-input');
+                const submitTitlesButton = document.getElementById('submit-titles-button');
+                const preTitle = document.querySelector('.pre-title');
+                const mainTitle = document.querySelector('.main-title');
+                const subTitle = document.querySelector('.sub-title2');
+
+                const folderNameInput = document.getElementById('folder-name-input');
+                const folderPrice = document.getElementById('folder-price-input');
+
+                const addFolderInput = document.getElementById('add-folder-input');
+                const folderDropdown = document.getElementById('folder-dropdown');
+                const folderInputs = document.getElementById('folder-inputs');
+                const folderGallery = document.getElementById('folder-gallery');
+                const fileUploader = document.getElementById('file-uploader');
+                const storedFolders = JSON.parse(localStorage.getItem('p24fallclassic1wed-folders')) || {};
+
+
+                const photoDisplay = document.getElementById('photo-display');
+                const photoDisplayContent = document.getElementById('photo-display-content');
+
+                const closePhotoDisplay = document.getElementById('close-photo-display');
+                const connectPagesButton = document.getElementById('connect-pages-button');
+                const connectOptions = document.getElementById('connect-options');
+
+                const createFolderConfirm = document.getElementById('create-folder-confirm');
+                const createFolderButton = document.getElementById('create-folder-button');
+                const createFolderSection = document.getElementById('create-folder-section');
+
+                const deleteFolderButton = document.getElementById('delete-folder-button');
+                const deleteFolderSection = document.getElementById('delete-folder-section');
+                const deleteFolderDropdown = document.getElementById('delete-folder-dropdown');
+                const confirmDeleteFolder = document.getElementById('confirm-delete-folder');
+
+                const uploadFilesSection = document.getElementById('upload-files-section');
+                const uploadFilesConfirm = document.getElementById('upload-files-confirm');
+                const uploadFilesButton = document.getElementById('upload-files-button');
+
+                let folders = JSON.parse(localStorage.getItem('folders')) || {};
+
+                // Select all dynamically created folder elements
+
+                // Remove any child elements where the folder name is undefined
+                Array.from(folderGallery.children).forEach(folder => {
+                    const folderButton = folder.querySelector('button');
+
+                    if (!folderButton || !folderButton.textContent.trim()) {
+                        console.warn('Removing undefined folder element:', folder);
+                        folder.remove(); // Remove the undefined folder
+                    }
+                });
+
+                console.log('Undefined folders cleaned from the page.');
+
+                fetch('/page/p24fallclassic1wed')
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Undefined folders cleaned successfully.');
+                        } else {
+                            console.error('Failed to clean undefined folders.');
+                        }
+                    })
+                    .catch(error => console.error('Error cleaning undefined folders:', error));
+
+                // Clear outdated localStorage data
+                localStorage.removeItem('folders');
+
+                fetch('/get-folders?page=p24fallclassic1wed')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch folders.');
+                        }
+                        return response.json();
+                    })
+                    .then(foldersFromServer => {
+                        const folders = {};
+                        foldersFromServer.forEach(({ folderName, price }) => {
+                            folders[folderName] = { price: parseFloat(price).toFixed(2), files: [] };
+
+                            // Display the folder price dynamically
+                            const priceElement = document.createElement('p');
+                            priceElement.id = `folder-price-input-${folderName}`;
+                            priceElement.textContent = `$${folders[folderName].price}`;
+                            priceElement.style.fontSize = '16px';
+                            priceElement.style.fontWeight = 'bold';
+
+                            // Dynamically append the price to the gallery or appropriate location
+                            const folderElement = document.querySelector(`#folder-${folderName}`);
+                            if (folderElement) {
+                                folderElement.appendChild(priceElement);
+                            }
+
+                            // Set folderPrice content if a specific price display is needed
+                            if (folderPrice && folderName === 'targetFolderName') {
+                                folderPrice.textContent = `Current Price: $${folders[folderName].price}`;
+                            }
+                        });
+
+                        // Save to localStorage for session persistence
+                        localStorage.setItem('folders', JSON.stringify(folders));
+                    })
+                    .catch(error => {
+                        console.error('Error fetching folders:', error);
+                        alert('An error occurred while loading folders.');
+                    });
+
+                Object.entries(storedFolders).forEach(([folderName, { price }]) => {
+                    createFolderButtonElement(folderName, price);
+                });
+
+                Object.keys(folders).forEach(createFolderButtonElement);
+
+                loadFolders();
+                // Update dropdowns
+                updateDropdown(deleteFolderDropdown);
+                updateDropdown(folderDropdown);
+
+                // Load saved titles from localStorage
+                // Load saved titles from localStorage
+                const loadTitles = () => {
+                    const pageKey = document.title; // Use the <title> tag as the key
+                    const savedTitles = JSON.parse(localStorage.getItem(`${pageKey}-titles`)) || {};
+                    if (savedTitles.topTitle) preTitle.textContent = savedTitles.topTitle;
+                    if (savedTitles.mainTitle) mainTitle.textContent = savedTitles.mainTitle; // Load main title
+                    if (savedTitles.subTitle) subTitle.textContent = savedTitles.subTitle;
+                };
+
+
+                // Save titles to localStorage
+                // Save titles to localStorage
+                const saveTitles = (topTitle, mainTitleText, subTitleText) => {
+                    const pageKey = document.title; // Use the <title> tag as the key
+                    const titles = {
+                        topTitle: topTitle || preTitle.textContent,
+                        mainTitle: mainTitleText || mainTitle.textContent, // Save main title
+                        subTitle: subTitleText || subTitle.textContent,
+                    };
+                    localStorage.setItem(`${pageKey}-titles`, JSON.stringify(titles));
+                };
+
+
+                loadTitles();
+
+
+                // Show the form on button click
+                adminToolsButton.addEventListener('click', () => {
+                    adminToolsForm.style.display = adminToolsForm.style.display === 'none' ? 'block' : 'none';
+                });
+
+                submitTitlesButton.addEventListener('click', () => {
+                    const topTitle = topTitleInput.value.trim();
+                    const mainTitleText = mainTitleInput.value.trim();
+                    const subTitleText = subTitleInput.value.trim();
+
+                    if (topTitle) preTitle.textContent = topTitle;
+                    if (mainTitleText) mainTitle.textContent = mainTitleText; // Update mainTitle
+                    if (subTitleText) subTitle.textContent = subTitleText;
+
+                    saveTitles(topTitle, mainTitleText, subTitleText); // Save the updated titles
+                    adminToolsForm.style.display = 'none';
+                    alert('Titles updated successfully!');
+                });
+
+
+
+                // Check if the logged-in user is hanacophotography@gmail.com
+                if (loggedInUser && loggedInUser.email === 'hanacophotography@gmail.com') {
+                    adminToolsContainer.style.display = 'block';
+                    connectPagesButton.style.display = 'block';
+                } else {
+                    connectPagesButton.style.display = 'none';
+                }
+                if (loggedInUser) {
+                    // Show "Log Out" and user initial
+                    authAction.textContent = 'Log Out';
+                    userIcon.textContent = loggedInUser.email.charAt(0).toUpperCase();
+                    userIcon.style.display = 'flex';
+                    userIcon.style.alignItems = 'center';
+                    userIcon.style.justifyContent = 'center';
+                    userIcon.style.width = '25px';
+                    userIcon.style.height = '25px';
+                    userIcon.style.borderRadius = '50%';
+                    userIcon.style.backgroundColor = '#ccc';
+                    userIcon.style.marginLeft = '10px';
+                    userIcon.style.color = '#000';
+                    userIcon.style.fontSize = '16px';
+
+                    // Make the icon clickable and link to the specific account page
+                    accountLink.href = `account?email=${encodeURIComponent(loggedInUser.email)}`;
+                } else {
+                    // Show "Log In"
+                    authAction.textContent = 'Log In';
+                    userIcon.style.display = 'none';
+                    accountLink.style.display = 'none';
+                }
+
+                authAction.addEventListener('click', () => {
+                    if (loggedInUser) {
+                        localStorage.removeItem('loggedInUser');
+                        window.location.reload();
+                    } else {
+                        window.location.href = 'login';
+                    }
+                });
+
+                // Back button functionality
+                backButton.addEventListener('click', () => {
+                    window.history.back();
+                });
+
+                // Toggle visibility of Connect Options
+                connectPagesButton.addEventListener('click', () => {
+                    if (connectOptions.style.display === 'none' || connectOptions.style.display === '') {
+                        connectOptions.style.display = 'block';
+                    } else {
+                        connectOptions.style.display = 'none';
+                    }
+                });
+
+                // Show Create Folder Section
+                createFolderButton.addEventListener('click', () => {
+                    createFolderSection.style.display = 'block';
+                    uploadFilesSection.style.display = 'none';
+                });
+
+                // Add Another Folder Input
+                addFolderInput.addEventListener('click', () => {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.placeholder = 'Folder Name';
+                    folderInputs.appendChild(input);
+                });
+
+
+                // Show Upload Files Section
+                uploadFilesButton.addEventListener('click', () => {
+                    uploadFilesSection.style.display =
+                        uploadFilesSection.style.display === 'none' ? 'block' : 'none';
+
+                    // Use the same dropdown for folder selection
+                    updateDropdown(deleteFolderDropdown); // Reuse the delete folder dropdown
+                    folderDropdown.innerHTML = deleteFolderDropdown.innerHTML;
+                });
+
+                // Upload Files
+                uploadFilesConfirm.addEventListener('click', () => {
+                    const selectedFolder = folderDropdown.value?.trim();
+                    const pageTitle = document.title?.trim(); // Ensures no undefined title
+                    const files = Array.from(fileUploader.files);
+                    const price = document.getElementById('file-price-input').value?.trim();
+
+                    // Validation: Check for folder name, price, and files
+                    if (!selectedFolder || selectedFolder === '') {
+                        alert('Please select a valid folder.');
+                        return;
+                    }
+                    if (!files.length) {
+                        alert('Please upload at least one file.');
+                        return;
+                    }
+                    if (!price || isNaN(price) || price <= 0) {
+                        alert('Please enter a valid price.');
+                        return;
+                    }
+
+                    // Proceed with file upload
+                    const formData = new FormData();
+                    formData.append('folder', selectedFolder);
+                    formData.append('pageTitle', pageTitle);
+                    formData.append('price', price);
+                    files.forEach(file => formData.append('files', file));
+
+                    fetch('/upload', { method: 'POST', body: formData })
+                        .then(response => {
+                            if (response.ok) {
+                                alert('Files uploaded successfully!');
+                            } else {
+                                alert('Failed to upload files.');
+                            }
+                        })
+                        .catch(error => console.error('Error uploading files:', error));
+                });
+
+
+
+
+
+
+
+
+                // Create Folder Button Element
+                function createFolderButtonElement(folderName, folderPrice) {
+                    if (!folderName || folderName === 'undefined') {
+                        console.warn(`Skipping invalid folder: ${folderName}`);
+                        return;
+                    }
+
+                    const wrapper = document.createElement('div');
+                    wrapper.style.display = 'flex';
+                    wrapper.style.flexDirection = 'column';
+                    wrapper.style.alignItems = 'center';
+                    wrapper.style.margin = '10px';
+
+                    const folderButton = document.createElement('button');
+                    folderButton.textContent = folderName;
+                    folderButton.className = 'folder-box';
+                    folderButton.addEventListener('click', () => displayPhotos(folderName));
+
+                    const priceText = document.createElement('p');
+                    priceText.textContent = `$${parseFloat(folderPrice).toFixed(2)}`;
+                    priceText.style.margin = '5px 0';
+                    priceText.style.fontSize = '16px';
+                    priceText.style.fontWeight = 'bold';
+
+                    const addToCartButton = document.createElement('button');
+                    addToCartButton.textContent = 'Add to Cart';
+                    addToCartButton.className = 'add-to-cart-button';
+                    addToCartButton.addEventListener('click', () => addToCart(folderName, folderName, folderPrice)); // Updated
+
+                    wrapper.appendChild(folderButton);
+                    wrapper.appendChild(priceText);
+                    wrapper.appendChild(addToCartButton);
+
+                    folderGallery.appendChild(wrapper);
+                }
+
+
+
+
+                function addToFavorites(folderName) {
+                    const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+
+                    if (!loggedInUser) {
+                        alert('You need to be logged in to add to favorites.');
+                        return;
+                    }
+
+                    fetch('/add-favorite', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: loggedInUser.email, folderName })
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                alert(`"${folderName}" has been added to your favorites.`);
+                            } else if (response.status === 409) {
+                                alert('This folder is already in your favorites.');
+                            } else {
+                                throw new Error('Failed to add to favorites.');
+                            }
+                        })
+                        .catch((error) => {
+                            console.error('Error adding to favorites:', error);
+                            alert('An error occurred while adding to favorites. Please try again later.');
+                        });
+                }
+
+
+
+
+
+                function addToCart(folderName, itemName, itemPrice) {
+                    if (!folderName || !itemPrice) {
+                        console.error('Invalid folder name or price:', folderName, itemPrice);
+                        alert('Failed to add item to cart. Missing folder name or price.');
+                        return;
+                    }
+
+                    const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+                    const cartKey = loggedInUser ? `cart_${loggedInUser.email}` : 'guest_cart';
+
+                    let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+                    const cartItem = {
+                        folder: folderName,
+                        name: itemName || folderName,
+                        price: parseFloat(itemPrice).toFixed(2),
+                    };
+
+                    cart.push(cartItem);
+                    localStorage.setItem(cartKey, JSON.stringify(cart));
+
+                    console.log('Cart updated:', cart);
+                    alert(`"${cartItem.name}" ($${cartItem.price}) has been added to your cart.`);
+                }
+
+
+
+
+
+
+
+                // Function to save folders to localStorage
+                function saveFoldersToLocalStorage() {
+                    localStorage.setItem('folders', JSON.stringify(folders));
+                }
+
+
+
+
+                // Create folders for all input fields
+                createFolderConfirm.addEventListener('click', () => {
+                    const folderInputs = Array.from(document.querySelectorAll('#folder-name-input, #folder-inputs input'));
+                    const folderPriceInput = document.getElementById('folder-price-input');
+                    const folderPrice = folderPriceInput.value.trim();
+
+                    if (!folderPrice || isNaN(folderPrice) || Number(folderPrice) <= 0) {
+                        alert('Please enter a valid price.');
+                        return;
+                    }
+
+                    const foldersToSave = folderInputs.map(input => {
+                        const folderName = input.value.trim();
+                        if (!folderName) {
+                            alert('Please enter a folder name.');
+                            throw new Error('Invalid folder name.');
+                        }
+                        return { folderName, price: parseFloat(folderPrice).toFixed(2) };
+                    });
+
+                    // Save folders and prices to localStorage
+                    let storedFolders = JSON.parse(localStorage.getItem('p24fallclassic1wed-folders')) || {};
+                    foldersToSave.forEach(({ folderName, price }) => {
+                        storedFolders[folderName] = { price };
+                        createFolderButtonElement(folderName, price); // Update the UI
+                    });
+
+                    localStorage.setItem('p24fallclassic1wed-folders', JSON.stringify(storedFolders));
+                    alert('Folders created successfully.');
+
+                    updateDropdown(deleteFolderDropdown);
+                    updateDropdown(folderDropdown);
+
+                    // Clear inputs after saving
+                    folderInputs.forEach(input => (input.value = ''));
+                    folderPriceInput.value = '';
+                });
+
+
+
+
+
+
+                // Load existing folders into the gallery on page load
+                function loadFolders() {
+                    Object.keys(folders).forEach(folderName => createFolderButtonElement(folderName));
+                }
+
+
+
+                // Update Folder Dropdown
+                function updateDropdown(dropdown) {
+                    const storedFolders = JSON.parse(localStorage.getItem('p24fallclassic1wed-folders')) || {};
+                    dropdown.innerHTML = '<option value="">Select a folder</option>'; // Default option
+
+                    Object.keys(storedFolders).forEach(folderName => {
+                        if (folderName && folderName.trim() !== '' && folderName !== 'undefined') {
+                            const option = document.createElement('option');
+                            option.value = folderName;
+                            option.textContent = folderName;
+                            dropdown.appendChild(option);
+                        }
+                    });
+                }
+
+
+
+
+
+                // Display Photos
+                function displayPhotos(folderName) {
+                    const pageTitle = document.title;
+
+                    fetch(`/images/${folderName}?page=${encodeURIComponent(pageTitle)}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Failed to fetch images.');
+                            return response.json();
+                        })
+                        .then(files => {
+                            photoDisplayContent.innerHTML = ''; // Clear existing content
+
+                            const gridContainer = document.createElement('div');
+                            gridContainer.className = 'photo-display-container';
+
+                            files.forEach(file => {
+                                const wrapper = document.createElement('div');
+                                wrapper.className = 'image-wrapper';
+
+                                // Create image element
+                                const img = document.createElement('img');
+                                img.src = file.path; // Fetch the correct path from photos.json
+                                img.alt = file.name;
+                                img.className = 'photo-image';
+
+                                // Add a logo overlay
+                                const logoOverlay = document.createElement('img');
+                                logoOverlay.src = 'hanaco_tag_black_text.png';
+                                logoOverlay.alt = 'Logo Overlay';
+                                logoOverlay.className = 'logo-overlay';
+
+                                // Add price display
+                                const priceElement = document.createElement('p');
+                                priceElement.textContent = `$${file.price}`;
+                                priceElement.className = 'photo-price';
+
+                                // Add-to-cart button
+                                const addToCartButton = document.createElement('button');
+                                addToCartButton.textContent = 'Add to Cart';
+                                addToCartButton.className = 'add-to-cart-button';
+                                addToCartButton.onclick = () => addToCart(folderName, file.name, file.price);
+
+                                // Append elements to wrapper
+                                wrapper.appendChild(img);
+                                wrapper.appendChild(logoOverlay);
+                                wrapper.appendChild(priceElement);
+                                wrapper.appendChild(addToCartButton);
+
+                                // Append wrapper to grid
+                                gridContainer.appendChild(wrapper);
+                            });
+
+                            // Add grid to the photo display content
+                            photoDisplayContent.appendChild(gridContainer);
+
+                            // Show the photo display overlay
+                            photoDisplay.style.display = 'block';
+                        })
+                        .catch(error => {
+                            console.error('Error fetching and displaying photos:', error);
+                            alert('Failed to load photos. Please try again.');
+                        });
+                }
+
+
+
+
+
+
+
+
+
+
+                // Close Modal
+                closePhotoDisplay.addEventListener('click', () => {
+                    photoDisplay.style.display = 'none';
+                    photoDisplayContent.innerHTML = ''; // Clear content
+                });
+
+
+
+                // Add Delete Folder Button to connect options
+                deleteFolderButton.id = 'delete-folder-button';
+                deleteFolderButton.textContent = 'Delete Folder';
+                connectOptions.appendChild(deleteFolderButton);
+
+
+                // Show Delete Folder Section
+                deleteFolderButton.addEventListener('click', () => {
+                    deleteFolderSection.style.display =
+                        deleteFolderSection.style.display === 'none' ? 'block' : 'none';
+                    updateDeleteFolderDropdown();
+                });
+
+                // Update the dropdown with folder names
+                function updateDeleteFolderDropdown() {
+                    const storedFolders = JSON.parse(localStorage.getItem('p24fallclassic1wed-folders')) || {};
+                    deleteFolderDropdown.innerHTML = '<option value="">Select a folder</option>';
+                    Object.keys(storedFolders).forEach(folderName => {
+                        const option = document.createElement('option');
+                        option.value = folderName;
+                        option.textContent = folderName;
+                        deleteFolderDropdown.appendChild(option);
+                    });
+                }
+
+                // Handle folder deletion
+                confirmDeleteFolder.addEventListener('click', () => {
+                    const selectedFolder = deleteFolderDropdown.value;
+
+                    if (!selectedFolder) {
+                        alert('Please select a folder to delete.');
+                        return;
+                    }
+
+                    let storedFolders = JSON.parse(localStorage.getItem('p24fallclassic1wed-folders')) || {};
+                    delete storedFolders[selectedFolder];
+                    localStorage.setItem('p24fallclassic1wed-folders', JSON.stringify(storedFolders));
+
+                    const folderElement = [...folderGallery.children].find(
+                        child => child.querySelector('button')?.textContent === selectedFolder
+                    );
+                    if (folderElement) folderGallery.removeChild(folderElement);
+
+                    alert(`Folder "${selectedFolder}" deleted successfully.`);
+
+                    // Update dropdowns
+                    updateDropdown(deleteFolderDropdown);
+                    updateDropdown(folderDropdown);
+                });
+
+
+                // Update Folder Dropdown
+                function updateFolderDropdown(dropdown) {
+                    dropdown.innerHTML = '';
+                    Object.keys(folders).forEach(name => {
+                        const option = document.createElement('option');
+                        option.value = name;
+                        option.textContent = name;
+                        dropdown.appendChild(option);
+                    });
+                }
+
+
+                // Add event listener for the close button
+                closePhotoDisplay.addEventListener('click', () => {
+                    // Hide the photo display overlay
+                    photoDisplay.style.display = 'none';
+
+                    // Clear the photo display content
+                    photoDisplayContent.innerHTML = '';
+
+                    console.log('Photo display closed successfully'); // Debugging log
+                });
+
+
+
+                // Load Folders on Page Load
+                updateFolderDropdown();
+            });
+        </script>
+
+        <footer>
+            <div class="footer-content">
+
+                <div class="footer-icon">
+                    <p>2024 Hanaco Photo LLC</p>
+                </div>
+            </div>
+        </footer>
+</body>
+</html>

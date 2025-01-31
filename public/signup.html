@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sign Up - Hanaco Photography</title>
+        <link rel="stylesheet" href="/assets/css/styles.css">
+    </head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="/assets/images/hanaco_tag_black_text.png" alt="Hanaco Logo" class="header-logo">
+        </div>
+        <nav class="nav-center">
+            <a href="/" style="color: red;">Home</a>
+            <a href="/shows">Shows</a>
+            <a href="/gallery">Gallery</a>
+            <a href="/contact">Contact</a>
+        </nav>
+        <div class="user-actions">
+            <a id="account-link" href="#" style="text-decoration: none;">
+                <div class="user-icon" id="user-icon"></div>
+            </a>
+            <span id="auth-action" style="cursor: pointer;"></span>
+            <a href="/cart">
+                <button id="cart-button" class="cart-button">Cart</button>
+            </a>
+        </div>
+    </header>
+
+
+    <div class="signup-container">
+        <h1>Sign Up</h1>
+        <form id="signup-form">
+            <input type="email" id="signup-email" placeholder="Email" required>
+            <input type="password" id="signup-password" placeholder="Password" required>
+            <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+            <button type="submit">Sign Up</button>
+        </form>
+        <div id="error-message" style="color: red; margin-top: 10px;"></div>
+        <p>Already have an account? <a href="login">Login</a></p>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <h1>Hanaco</h1>
+            <p>Know Where I'm Going to Be Shooting Next!</p>
+            <form id="subscribe-form" action="/subscribe" method="POST">
+                <div class="footer-content input[type=" text"]">
+                    <input type="email" name="email" placeholder="Enter your email here *" required>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="footer-icon">
+                <p>2024 Hanaco Photo LLC</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value.trim();
+            const confirmPassword = document.getElementById('confirm-password').value.trim();
+            const errorMessage = document.getElementById('error-message');
+            
+            // Clear previous error messages
+            errorMessage.textContent = '';
+
+            // Enhanced client-side validation
+            console.group('Signup Validation');
+            console.log('Email:', email);
+            console.log('Password length:', password.length);
+            console.log('Passwords match:', password === confirmPassword);
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                console.error('Invalid email format');
+                errorMessage.textContent = 'Please enter a valid email address';
+                console.groupEnd();
+                return;
+            }
+
+            // Password complexity checks
+            if (password.length < 8) {
+                console.error('Password too short');
+                errorMessage.textContent = 'Password must be at least 8 characters long';
+                console.groupEnd();
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                console.error('Passwords do not match');
+                errorMessage.textContent = 'Passwords do not match';
+                console.groupEnd();
+                return;
+            }
+
+            console.log('All client-side validations passed');
+            console.groupEnd();
+
+            try {
+                // Show loading state
+                const submitButton = e.target.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Signing Up...';
+
+                const response = await fetch('/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                // Comprehensive response logging
+                console.group('Signup Response');
+                console.log('Response status:', response.status);
+                console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+                // Try to parse the response body
+                let data;
+                try {
+                    data = await response.json();
+                    console.log('Response body:', data);
+                } catch (parseError) {
+                    console.error('Error parsing response body:', parseError);
+                }
+
+                // Restore button state
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign Up';
+
+                // Handle different response scenarios
+                if (!response.ok) {
+                    // Detailed error handling
+                    const errorMsg = data?.message || 
+                                    `Signup failed with status ${response.status}` || 
+                                    'An unexpected error occurred';
+                    
+                    console.error('Signup error:', errorMsg);
+                    errorMessage.textContent = errorMsg;
+                    
+                    console.groupEnd();
+                    return;
+                }
+
+                // Successful signup
+                console.log('Signup successful');
+                console.groupEnd();
+                
+                alert('Sign up successful! Please login.');
+                window.location.href = 'login';
+
+            } catch (error) {
+                // Network or unexpected errors
+                console.error('Full signup error:', error);
+                
+                // Restore button state
+                const submitButton = e.target.querySelector('button[type="submit"]');
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign Up';
+                
+                // Detailed error messaging
+                if (error instanceof TypeError) {
+                    errorMessage.textContent = 'Network error. Please check your connection.';
+                } else {
+                    errorMessage.textContent = error.message || 'An unexpected error occurred during signup';
+                }
+            }
+        });
+    </script>
+
+
+
+</body>
+</html>
